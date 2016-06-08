@@ -4,7 +4,7 @@
 一句话调用，你值得拥有
 
 
-<img src="http://ww4.sinaimg.cn/large/005Duxwwgw1f4o1n8tjltg30ac05lb2a.gif" width="100%" height="100%">
+<img src="http://ww4.sinaimg.cn/large/005Duxwwgw1f4o1n8tjltg30ac05lb2a.gif" width="50%" height="50%">
 
 使用方法如下
         
