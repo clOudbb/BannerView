@@ -1,8 +1,7 @@
 #个人封装简单的Demo  可自定义page位置
 
-具体方法在.h中有详细说明
+新增各种动画效果，提升个性化! 具体动画类型在.h中有详细介绍
 
-新增各种动画效果，提升个性化!具体动画类型在.h中有详细介绍
 使用方法如下
         
         self.bannersView = [BannersView initWithFrame:CGRect withURLArray:self.bannerArr animationType:kTransitionRippleEffect];
