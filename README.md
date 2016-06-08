@@ -3,7 +3,8 @@
 新增各种动画效果，提升个性化! 具体动画类型在.h中有详细介绍
 一句话调用，你值得拥有
 
-http://ww4.sinaimg.cn/large/005Duxwwgw1f4o1n8tjltg30ac05lb2a.gif
+
+<img src="http://ww4.sinaimg.cn/large/005Duxwwgw1f4o1n8tjltg30ac05lb2a.gif" width="30%" height="30%">
 
 使用方法如下
         
