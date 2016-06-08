@@ -19,6 +19,9 @@
 
 @property (nonatomic, strong) NSMutableArray *imgArr;
 @property (nonatomic, strong) NSTimer *timer;
+
+@property (nonatomic, strong) NSArray *animationArray;  /**< 动画数组 */
+@property (nonatomic, assign) AnimationType type;           /**< 动画类型 */
 @end
 @implementation BannersView
 - (void) dealloc{
@@ -27,7 +30,8 @@
     _timer = nil;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame withURLArray: (NSMutableArray *)array{
+- (instancetype)initWithFrame:(CGRect)frame withURLArray: (NSMutableArray *)array animationType:(AnimationType)type
+{
     self = [super initWithFrame:frame];
     if (self) {
         [self createScrollViewWithCount:array.count];
@@ -37,12 +41,24 @@
             self.imgArr = [NSMutableArray array];
         }
         _imgArr = array;
+        self.animationArray = [self createAnimationArray];
+        self.type = type;
     }
     return self;
 }
 
-+ (BannersView *) initWithFrame: (CGRect)frame withURLArray:(NSMutableArray *)array{
-    return [[BannersView alloc] initWithFrame:frame withURLArray:array];
++ (BannersView *) initWithFrame: (CGRect)frame withURLArray:(NSMutableArray *)array animationType:(AnimationType)type
+{
+    return [[BannersView alloc] initWithFrame:frame withURLArray:array animationType:type];
+}
+
+/** 创建动画效果数组 */
+- (NSArray *)createAnimationArray
+{
+    if (!_animationArray) {
+            self.animationArray = @[kCATransitionFade, kCATransitionPush, kCATransitionReveal, kCATransitionMoveIn, @"cube", @"suckEffect", @"rippleEffect", @"pageCurl", @"pageUnCurl", @"cameraIrisHollowOpen", @"cameraIrisHollowClose", @"oglFlip"];
+    }
+    return _animationArray;
 }
 
 /** 创建ScrollView */
@@ -112,7 +128,7 @@
 - (void) imageTouch: (UITapGestureRecognizer *)tap{
     
     if (self.imageTouchBlock != nil) {
-        self.imageTouchBlock(_pageControl.currentPage);
+        self.imageTouchBlock(_pageControl.currentPage + 1);
     }
     NSString *page = [NSString stringWithFormat:@"%ld", _pageControl.currentPage];
     NSInteger count = [[[NSUserDefaults standardUserDefaults] objectForKey:page] integerValue];
@@ -164,7 +180,6 @@
 
 #pragma mark - NSTimer
 - (void) initNSTimerWithSecond: (CGFloat) second{
-
     if (!_timer) {
         self.timer = [NSTimer scheduledTimerWithTimeInterval:second target:self selector:@selector(timeAction:) userInfo:nil repeats:YES];
     }
@@ -173,17 +188,45 @@
 - (void) timeAction: (NSTimer *) timer{
     CGFloat xOffset = _bannersScrollView.contentOffset.x;
     [_bannersScrollView setContentOffset:CGPointMake(xOffset+ SELF_WIDTH, 0) animated:YES];
-    if (xOffset == SELF_WIDTH * (_imgArr.count + 1)) {
-        _bannersScrollView.contentOffset = CGPointMake(SELF_WIDTH, 0);
+//    if (xOffset == SELF_WIDTH * (_imgArr.count + 1)) {
+//        _bannersScrollView.contentOffset = CGPointMake(SELF_WIDTH, 0);
+//    }
+//    else if (xOffset == 0){
+//        _bannersScrollView.contentOffset = CGPointMake(SELF_WIDTH * _imgArr.count, 0);
+//    }
+    if (self.type != kTransitionNone) {
+        [self imageAnimationType:self.type];
+    }else{
+        if (xOffset == SELF_WIDTH * (_imgArr.count + 1)) {
+            _bannersScrollView.contentOffset = CGPointMake(SELF_WIDTH, 0);
+        }
+        else if (xOffset == 0){
+            _bannersScrollView.contentOffset = CGPointMake(SELF_WIDTH * _imgArr.count, 0);
+        }
     }
-    else if (xOffset == 0){
-        _bannersScrollView.contentOffset = CGPointMake(SELF_WIDTH * _imgArr.count, 0);
-    }
+}
+/** 动画 */
+- (void)imageAnimationType:(AnimationType)type
+{
+    CATransition *animate = [CATransition animation];
+    [animate setType:self.animationArray[type]];
+    [animate setSubtype:kCATransitionFromRight];        /**< 动画进入方向 */
+    [animate setDuration:1.0];
+    [self.bannersScrollView.layer addAnimation:animate forKey:nil];
     
+    [self.bannersScrollView scrollRectToVisible:CGRectMake(SELF_WIDTH*_imgArr.count, 0, SELF_WIDTH, SELF_HEIGHT) animated:YES];
 }
 
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView{
     CGFloat xOffset = _bannersScrollView.contentOffset.x;
+    //水波纹动画
+//    CATransition *animate = [CATransition animation];
+//    [animate setType:@"rippleEffect"];
+//    [animate setSubtype:kCATransitionFromRight];
+//    [animate setDuration:1.0];
+//    [self.bannersScrollView.layer addAnimation:animate forKey:nil];
+//    
+//    [self.bannersScrollView scrollRectToVisible:CGRectMake(SELF_WIDTH*_imgArr.count, 0, SELF_WIDTH, 125) animated:YES];
     if (xOffset == 0) {
         _bannersScrollView.contentOffset = CGPointMake(SELF_WIDTH * _imgArr.count, 0);
     }if (xOffset == SELF_WIDTH * (_imgArr.count +1)) {
