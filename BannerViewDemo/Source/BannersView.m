@@ -9,6 +9,7 @@
 #import "BannersView.h"
 #import <UIImageView+WebCache.h>
 #import <AFNetworking.h>
+
 // View的宽高
 #define SELF_WIDTH     self.bounds.size.width
 #define SELF_HEIGHT   self.bounds.size.height
