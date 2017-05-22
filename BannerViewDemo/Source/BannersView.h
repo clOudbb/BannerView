@@ -45,4 +45,8 @@ typedef NS_ENUM(NSInteger, AnimationType){
 /** Block中调用，可以打印某张图片被点击次数 */
 - (void) printCountWithPage: (NSInteger) page;
 
+/**
+ * 如果视图所在VC需要释放，应手动releaseTimer，否则ViewController dealloc由于timer不会执行
+ */
+- (void)releaseTimer;
 @end

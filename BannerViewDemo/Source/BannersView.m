@@ -19,16 +19,16 @@
 @property (nonatomic, strong) UIPageControl *pageControl;
 
 @property (nonatomic, strong) NSMutableArray *imgArr;
-@property (nonatomic, strong) NSTimer *timer;
+@property (nonatomic, strong, nullable, readwrite) dispatch_source_t timer;
 
 @property (nonatomic, strong) NSArray *animationArray;  /**< 动画数组 */
 @property (nonatomic, assign) AnimationType type;           /**< 动画类型 */
+
 @end
 @implementation BannersView
-- (void) dealloc{
+- (void) dealloc
+{
     _bannersScrollView.delegate = nil;
-    [_timer invalidate];
-    _timer = nil;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame withURLArray: (NSMutableArray *)array animationType:(AnimationType)type
@@ -178,15 +178,8 @@
     [self initPageControlWithFrame:CGRectMake(SELF_WIDTH / 2 - 100, SELF_HEIGHT - 20, 200, 20)];
 }
 
-
-#pragma mark - NSTimer
-- (void) initNSTimerWithSecond: (CGFloat) second{
-    if (!_timer) {
-        self.timer = [NSTimer scheduledTimerWithTimeInterval:second target:self selector:@selector(timeAction:) userInfo:nil repeats:YES];
-    }
-}
-
-- (void) timeAction: (NSTimer *) timer{
+- (void) timeAction
+{
     CGFloat xOffset = _bannersScrollView.contentOffset.x;
     [_bannersScrollView setContentOffset:CGPointMake(xOffset+ SELF_WIDTH, 0) animated:YES];
 //    if (xOffset == SELF_WIDTH * (_imgArr.count + 1)) {
@@ -238,9 +231,29 @@
     }
 }
 
+#pragma mark -- Timer
+- (void) initNSTimerWithSecond: (CGFloat) second
+{
+    [self releaseTimer];
+    __weak __typeof__(self)weakSelf = self;
+    _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
+    dispatch_source_set_timer(_timer, dispatch_time(DISPATCH_TIME_NOW, second * NSEC_PER_SEC), second * NSEC_PER_SEC, 0.1 * NSEC_PER_SEC);
+    dispatch_source_set_event_handler(_timer, ^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            __strong __typeof__(weakSelf)strongSelf = weakSelf;
+            [strongSelf timeAction];
+        });
+    });
+    dispatch_resume(_timer);
+}
 
-
-
+- (void)releaseTimer
+{
+    if (_timer) {
+        dispatch_source_cancel(_timer);
+        _timer = nil;
+    }
+}
 
 /*
 // Only override drawRect: if you perform custom drawing.
