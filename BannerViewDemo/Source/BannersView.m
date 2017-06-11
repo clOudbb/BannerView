@@ -21,7 +21,7 @@
 @property (nonatomic, strong) NSMutableArray *imgArr;
 @property (nonatomic, strong, nullable, readwrite) dispatch_source_t timer;
 
-@property (nonatomic, strong) NSArray *animationArray;  /**< 动画数组 */
+@property (nonatomic, copy) NSArray *animationArray;  /**< 动画数组 */
 @property (nonatomic, assign) AnimationType type;           /**< 动画类型 */
 
 @end
