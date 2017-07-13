@@ -5,7 +5,7 @@
 
 <img src="http://ww4.sinaimg.cn/large/005Duxwwgw1f4o1n8tjltg30ac05lb2a.gif" width="50%" height="50%">
 
-使用方法如下
+### 使用方法如下
         
         self.bannersView = [BannersView initWithFrame:CGRect withURLArray:self.bannerArr animationType:kTransitionRippleEffect];
         [_bannersView initPageControlWithCenter];
